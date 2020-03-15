@@ -1159,12 +1159,25 @@ static void cleanup_all(void)
 
 static void usage(void)
 {
-	fprintf(stderr, "%s [-g cgroup]", g_name);
+	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms]", g_name);
+}
+
+static int set_interval(const char *arg)
+{
+	unsigned long long v;
+
+	if (1 != sscanf(arg, "%llu", &v))
+		return -1;
+
+	g_delta_time_ms = v;
+
+	return 0;
 }
 
 static struct option g_option[] = {
 	{"cgroup",	required_argument,	0, 'g'},
 	{"extend",	no_argument,		0, 'x'},
+	{"interval",	required_argument,	0, 'i'},
 	{0, 0, 0, 0}
 };
 
@@ -1174,17 +1187,20 @@ static int parse_args(int argc, char **argv)
 
 	g_name = argv[0];
 
-	while ((opt = getopt_long(argc, argv, "g:x", g_option, &index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "g:i:x", g_option, &index)) != -1) {
 		switch (opt) {
 		case 'g':
 			if (block_cgroup_alloc_one(optarg))
 				goto out;
 			break;
-		case 'e':
+		case 'x':
 			g_extend = 1;
 			break;
+		case 'i':
+			if (set_interval(optarg))
+				goto out;
+			break;
 		default:
-			usage();
 			goto out;
 		}
 	}
@@ -1192,6 +1208,7 @@ static int parse_args(int argc, char **argv)
 	return 0;
 
 out:
+	usage();
 	cleanup_all();
 	return -1;
 }
