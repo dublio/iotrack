@@ -1061,9 +1061,12 @@ static void cleanup_all(void)
 
 static void usage(void)
 {
-	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms] [-D] [-d]\n", g_name);
-	fprintf(stderr, "%s -h  --help: show this help\n", g_name);
-	fprintf(stderr, "%s -D  --debug: enable debug log\n", g_name);
+	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk]\n", g_name);
+	fprintf(stderr, "%s  -h  --help: show this help\n", g_name);
+	fprintf(stderr, "    -x, --extend: enable extend fields, the extend field show the statistics for read,write and others\n");
+	fprintf(stderr, "    -D, --debug: enable debug log\n");
+	fprintf(stderr, "    -d disk, --device disk: specify the disk name, i.e. -d nvme0n1 -d sda\n");
+	fprintf(stderr, "    -i interval_ms, --interval interval_ms: specify the sampling interval\n");
 }
 
 static int set_interval(const char *arg)
