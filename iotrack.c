@@ -339,7 +339,7 @@ free:
 	return -1;
 }
 
-static int block_device_init(void)
+static int block_device_init_all(void)
 {
 	DIR *dirp;
 	struct dirent *entry;
@@ -388,6 +388,20 @@ out:
 	closedir(dirp);
 
 	return -1;
+}
+
+static int block_device_init(void)
+{
+
+	/*
+	 * if list is not empty, user must specify the device by -d,
+	 * just return here, don't scan all block device.
+	 */
+	if (0 == list_empty(&g_block_device))
+		return 0;
+
+	/* scan all block device in the system */
+	return block_device_init_all();
 }
 
 static inline bool block_cgroup_is_exist(const char *path)
@@ -1047,7 +1061,7 @@ static void cleanup_all(void)
 
 static void usage(void)
 {
-	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms] [-D]\n", g_name);
+	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms] [-D] [-d]\n", g_name);
 	fprintf(stderr, "%s -h  --help: show this help\n", g_name);
 	fprintf(stderr, "%s -D  --debug: enable debug log\n", g_name);
 }
@@ -1069,6 +1083,7 @@ static struct option g_option[] = {
 	{"extend",	no_argument,		0, 'x'},
 	{"interval",	required_argument,	0, 'i'},
 	{"debug",	no_argument,		0, 'D'},
+	{"device",	required_argument,	0, 'd'},
 	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
 };
@@ -1079,10 +1094,14 @@ static int parse_args(int argc, char **argv)
 
 	g_name = argv[0];
 
-	while ((opt = getopt_long(argc, argv, "g:i:xhD", g_option, &index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "d:g:i:xhD", g_option, &index)) != -1) {
 		switch (opt) {
 		case 'g':
 			if (block_cgroup_alloc_one(optarg))
+				goto out;
+			break;
+		case 'd':
+			if (block_device_init_one(optarg))
 				goto out;
 			break;
 		case 'x':
