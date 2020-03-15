@@ -33,6 +33,7 @@ LIST_HEAD(g_block_cgroup);
 int g_index;
 int g_loop;
 int g_extend;
+int g_debug;
 char g_ts[64];
 const char *g_name;
 
@@ -51,15 +52,11 @@ do { \
 	fprintf(stderr, "%s[%d] "fmt, __func__, __LINE__, ## __VA_ARGS__); \
 } while(0)
 
-#define DBG
-#ifdef DBG
 #define dbg(fmt, ...) \
 do { \
-	fprintf(stderr, "%s[%d] "fmt, __func__, __LINE__, ## __VA_ARGS__); \
+	if (g_debug) \
+		fprintf(stderr, "%s[%d] "fmt, __func__, __LINE__, ## __VA_ARGS__); \
 } while(0)
-#else
-#define dbg(fmt, ...) do {} while(0)
-#endif
 
 static inline mode_t stat_mode(const char *path)
 {
@@ -1050,8 +1047,9 @@ static void cleanup_all(void)
 
 static void usage(void)
 {
-	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms]\n", g_name);
+	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms] [-D]\n", g_name);
 	fprintf(stderr, "%s -h  --help: show this help\n", g_name);
+	fprintf(stderr, "%s -D  --debug: enable debug log\n", g_name);
 }
 
 static int set_interval(const char *arg)
@@ -1070,6 +1068,7 @@ static struct option g_option[] = {
 	{"cgroup",	required_argument,	0, 'g'},
 	{"extend",	no_argument,		0, 'x'},
 	{"interval",	required_argument,	0, 'i'},
+	{"debug",	no_argument,		0, 'D'},
 	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
 };
@@ -1080,7 +1079,7 @@ static int parse_args(int argc, char **argv)
 
 	g_name = argv[0];
 
-	while ((opt = getopt_long(argc, argv, "g:i:xh", g_option, &index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "g:i:xhD", g_option, &index)) != -1) {
 		switch (opt) {
 		case 'g':
 			if (block_cgroup_alloc_one(optarg))
@@ -1088,6 +1087,9 @@ static int parse_args(int argc, char **argv)
 			break;
 		case 'x':
 			g_extend = 1;
+			break;
+		case 'D':
+			g_debug = 1;
 			break;
 		case 'i':
 			if (set_interval(optarg))
