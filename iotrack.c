@@ -281,7 +281,7 @@ static void block_device_deinit(void)
 		block_device_deinit_one(dev);
 }
 
-static int block_device_init_one(const char *path, const char *name)
+static int block_device_init_one(const char *name)
 {
 	struct block_device *dev;
 	int fd, len, major, minor;
@@ -298,7 +298,7 @@ static int block_device_init_one(const char *path, const char *name)
 	memset(tmp, 0, sizeof(tmp));
 
 	/* get major and minor */
-	snprintf(file, sizeof(file), "%s/dev", path);
+	snprintf(file, sizeof(file), "%s/%s/dev", BLOCK_DEVICE_DIR, name);
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0) {
@@ -374,7 +374,7 @@ static int block_device_init(void)
 
 		/* if it's a directory iterate it recursively */
 		if (S_ISDIR(mode)) {
-			if (block_device_init_one(tmp, entry->d_name)) {
+			if (block_device_init_one(entry->d_name)) {
 				goto out;
 			}
 		}
