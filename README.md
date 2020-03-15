@@ -16,13 +16,21 @@ Tracking io statistics base on kernel/block/blk-iotrack.
 You enable blk-iotrack by set  `BLK_CGROUP_IOTRACK=y` in your kernel configuration.
 
 ## Arguments
-	iotrack [-g cgroup] [-x]
+	iotrack [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk]
 
-	-g cgroup: monitor a cgroup's io statistics.
+	-g cgroup, --cgroup cgroup: monitor a cgroup's io statistics.
 			If you want to monitor multipe cgroup, you can use this option multiple times, i.e.
 			$ iotrack -g /sys/fs/cgroup/blkio/test1/ -g /sys/fs/cgroup/blkio/test2
 
-	-x: show extend fields
+	-x, --extend: show extend fields, which show the detail statistics for read,write and others.
+
+	-h, --help: show this help.
+
+	-D, --debug: show debug log.
+
+	-d disk, --device disk: specify the disk name, i.e. $ iotrack -d nvme0n1 -d sda -d sdb
+
+	-i interval_ms, --interval interval_ms: specify the sampling interval in unit of millisecond.
 
 
 ## Output field
