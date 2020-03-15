@@ -1150,12 +1150,6 @@ static int show_data()
 	return 0;
 }
 
-static struct option g_option[] = {
-	{"cgroup",	required_argument,	0, 'g'},
-	{"extend",	no_argument,		0, 'x'},
-	{0, 0, 0, 0}
-};
-
 static void cleanup_all(void)
 {
 	block_cgroup_deinit();
@@ -1167,6 +1161,12 @@ static void usage(void)
 {
 	fprintf(stderr, "%s [-g cgroup]", g_name);
 }
+
+static struct option g_option[] = {
+	{"cgroup",	required_argument,	0, 'g'},
+	{"extend",	no_argument,		0, 'x'},
+	{0, 0, 0, 0}
+};
 
 static int parse_args(int argc, char **argv)
 {
