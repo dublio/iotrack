@@ -62,7 +62,7 @@ struct iotrack_stat {
 
 	/* completed io, kb and latency_sum */
 	unsigned long long ios[IOT_NR];
-	unsigned long long kbs[IOT_NR];
+	unsigned long long sts[IOT_NR];
 	unsigned long long tms[IOT_NR];
 
 	/* latency distribution */
@@ -78,13 +78,13 @@ struct blk_iotrack {
 	 * children's percentile data, i.e. io_pct,b_pct.
 	 */
 	unsigned long long delta_ios[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
-	unsigned long long delta_kbs[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
+	unsigned long long delta_sts[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
 	unsigned long long delta_tms[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
 
 	float iops[IOT_NR + 1];		/* r/s, w/s, o/s, io/s */
 	float bps[IOT_NR + 1];		/* rMB/s, wMB/s, oMB/s, MB/s */
 	float io_pct[IOT_NR + 1];	/* cgroup.ios[i] / disk.ios[IOT_NR] */
-	float b_pct[IOT_NR + 1];	/* cgroup.kbs[i] / disk.kbs[IOT_NR] */
+	float b_pct[IOT_NR + 1];	/* cgroup.sts[i] / disk.sts[IOT_NR] */
 	float tm_pct[IOT_NR + 1];	/* cgroup.tms[i] / disk.tms[IOT_NR] */
 	/*
 	 * %rhit, %whit, %ohit, %hit

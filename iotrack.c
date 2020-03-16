@@ -570,14 +570,14 @@ static void block_gq_calc_data(struct block_gq *gq)
 	/* rMB/s, wMB/s, oMB/s */
 	total = 0;
 	for (i = 0; i < IOT_NR; i++) {
-		delta = (float)(now->kbs[i] - last->kbs[i]);
-		iotrack->bps[i] = delta / 1024.0 / (float)g_delta_time_ms;
-		iotrack->delta_kbs[i] = delta;
+		delta = (float)(now->sts[i] - last->sts[i]);
+		iotrack->bps[i] = 1000.0 * delta / 2048.0 / (float)g_delta_time_ms;
+		iotrack->delta_sts[i] = delta;
 		total += delta;
 	}
 	/* MB/s */
-	iotrack->bps[IOT_NR] = total / 1024.0 / (float)g_delta_time_ms;
-	iotrack->delta_kbs[IOT_NR] = total;
+	iotrack->bps[IOT_NR] = 1000.0 * total / 2048.0 / (float)g_delta_time_ms;
+	iotrack->delta_sts[IOT_NR] = total;
 
 	/* io percentile: %rio %wio %oio %io */
 	total_device = (float)root_gq->iotrack.delta_ios[IOT_NR];
@@ -586,10 +586,10 @@ static void block_gq_calc_data(struct block_gq *gq)
 			100.0 * iotrack->delta_ios[i] / total_device : 0.0;
 
 	/* kb percentile: %rkb %wkb %okb %kb */
-	total_device = (float)root_gq->iotrack.delta_kbs[IOT_NR];
+	total_device = (float)root_gq->iotrack.delta_sts[IOT_NR];
 	for (i = 0; i < IOT_NR + 1; i++)
 		iotrack->b_pct[i] = total_device > 0 ?
-			100.0 * iotrack->delta_kbs[i] / total_device : 0.0;
+			100.0 * iotrack->delta_sts[i] / total_device : 0.0;
 
 	/* time percentile: %rtm %wtm %otm %tm */
 	total_device = (float)root_gq->iotrack.delta_tms[IOT_NR];
@@ -829,7 +829,7 @@ static int block_cgroup_read_iostat_one(struct block_cgroup *g)
 		nr = sscanf(buf,
 			"%d:%d mean: %llu min: %llu max: %llu sum: %llu "
 			"rios: %llu wios: %llu oios:%llu "
-			"rkbs: %llu wkbs: %llu okbs: %llu "
+			"rsts: %llu wsts: %llu osts: %llu "
 			"rtms: %llu wtms: %llu otms: %llu "
 			"rhit: %llu %llu %llu %llu %llu %llu %llu %llu "
 			"whit: %llu %llu %llu %llu %llu %llu %llu %llu "
@@ -837,7 +837,7 @@ static int block_cgroup_read_iostat_one(struct block_cgroup *g)
 			,
 			&s.major, &s.minor, &s.mean, &s.min, &s.max, &s.sum,
 			&s.ios[IOT_READ], &s.ios[IOT_WRITE], &s.ios[IOT_OTHER],
-			&s.kbs[IOT_READ], &s.kbs[IOT_WRITE], &s.kbs[IOT_OTHER],
+			&s.sts[IOT_READ], &s.sts[IOT_WRITE], &s.sts[IOT_OTHER],
 			&s.tms[IOT_READ], &s.tms[IOT_WRITE], &s.tms[IOT_OTHER],
 			&s.hit[IOT_READ][0], &s.hit[IOT_READ][1],
 			&s.hit[IOT_READ][2], &s.hit[IOT_READ][3],
