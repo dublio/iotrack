@@ -659,13 +659,16 @@ static void block_gq_show_data(struct block_gq *gq)
 	e = buf + sizeof(buf);
 	p += snprintf(p, e - p,
 		"%-24s %-16s "		/* timestamp, name */
-		"%8.2f %8.2f %8.2f "	/* mean(u.2f) min(u.2f) max(u.2f) */
 		,g_ts, gq->dev->name
-		,(float)iotrack->stat[g_index].mean	/ 1000.0
-		,(float)iotrack->stat[g_index].min	/ 1000.0
-		,(float)iotrack->stat[g_index].max	/ 1000.0
 		);
 
+	if (g_extend)
+		p += snprintf(p, e - p,
+			"%8.2f %8.2f %8.2f "	/* mean(u.2f) min(u.2f) max(u.2f) */
+			,(float)iotrack->stat[g_index].mean	/ 1000.0
+			,(float)iotrack->stat[g_index].min	/ 1000.0
+			,(float)iotrack->stat[g_index].max	/ 1000.0
+			);
 	/* io/s */
 	p += snprintf(p, e - p, "%8.2f ", iotrack->iops[IOT_NR]);
 	/* rio/s wio/s oio/s */
@@ -955,9 +958,11 @@ static inline void block_cgroup_show_header(void)
 	e = buf + sizeof(buf);
 	p += snprintf(p, e - p,
 		"%-24s %-16s "		/* timestamp, name */
-		"%8s %8s %8s "		/* mean(us) min(us) max(us) */
-		, "Time", "Device", "mean(us)", "min(us)", "max(us)");
-
+		, "Time", "Device");
+	if (g_extend)
+		p += snprintf(p, e - p,
+			"%8s %8s %8s "		/* mean(us) min(us) max(us) */
+			, "mean(us)", "min(us)", "max(us)");
 	/* io/s */
 	p += snprintf(p, e - p, "%8s ", "io/s");
 	/* rio/s wio/s oio/s */
