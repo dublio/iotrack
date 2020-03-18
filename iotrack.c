@@ -886,8 +886,8 @@ static int block_cgroup_read_iostat_one(struct block_cgroup *g)
 			&s.hit[IOT_OTHER][6], &s.hit[IOT_OTHER][7]
 			);
 		if (nr != IOTRACK_STAT_FIELD_NR) {
-			log("iotrack stat filed not match %d, expect %d\n",
-				nr, IOTRACK_STAT_FIELD_NR);
+			log("iotrack stat filed not match %d, expect %d, buf:%s\n",
+				nr, IOTRACK_STAT_FIELD_NR, buf);
 			return -1;
 		}
 
