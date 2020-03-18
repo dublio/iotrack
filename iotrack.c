@@ -607,6 +607,22 @@ static void block_gq_calc_data(struct block_gq *gq)
 			100.0 * iotrack->delta_tms[i] / total_device : 0.0;
 	}
 
+	/* disk time delta:rtm wtm otm tm */
+	total = 0;
+	for (i = 0; i < IOT_NR; i++) {
+		delta = (float)(now->dtms[i] - last->dtms[i]);
+		iotrack->delta_dtms[i] = delta;
+		total += delta;
+	}
+	iotrack->delta_dtms[IOT_NR] = total;
+
+	/* disk time percentile: %rtm %wtm %otm %tm */
+	total_device = (float)root_gq->iotrack.delta_dtms[IOT_NR];
+	for (i = 0; i < IOT_NR + 1; i++) {
+		iotrack->dtm_pct[i] = total_device > 0 ?
+			100.0 * iotrack->delta_dtms[i] / total_device : 0.0;
+	}
+
 	/* cgroup level */
 	for (j = 0; j < LAT_BUCKET_NR; j++)
 		total_hit[j] = 0.0;
@@ -712,6 +728,19 @@ static void block_gq_show_data(struct block_gq *gq)
 			, iotrack->tm_pct[IOT_READ]
 			, iotrack->tm_pct[IOT_WRITE]
 			, iotrack->tm_pct[IOT_OTHER]
+			);
+	}
+
+	/* %dtm */
+	p += snprintf(p, e - p, "%8.2f ", iotrack->dtm_pct[IOT_NR]);
+	/* %rdtm %wdtm %odtm */
+	if (g_extend) {
+		/* do not use for loop here, avoid new inserted IOT_XXX */
+		p += snprintf(p, e - p,
+			"%8.2f %8.2f %8.2f "
+			, iotrack->dtm_pct[IOT_READ]
+			, iotrack->dtm_pct[IOT_WRITE]
+			, iotrack->dtm_pct[IOT_OTHER]
 			);
 	}
 
@@ -833,6 +862,7 @@ static int block_cgroup_read_iostat_one(struct block_cgroup *g)
 			"rios: %llu wios: %llu oios:%llu "
 			"rsts: %llu wsts: %llu osts: %llu "
 			"rtms: %llu wtms: %llu otms: %llu "
+			"rdtms: %llu wdtms: %llu odtms: %llu "
 			"rhit: %llu %llu %llu %llu %llu %llu %llu %llu "
 			"whit: %llu %llu %llu %llu %llu %llu %llu %llu "
 			"ohit: %llu %llu %llu %llu %llu %llu %llu %llu\n"
@@ -841,6 +871,7 @@ static int block_cgroup_read_iostat_one(struct block_cgroup *g)
 			&s.ios[IOT_READ], &s.ios[IOT_WRITE], &s.ios[IOT_OTHER],
 			&s.sts[IOT_READ], &s.sts[IOT_WRITE], &s.sts[IOT_OTHER],
 			&s.tms[IOT_READ], &s.tms[IOT_WRITE], &s.tms[IOT_OTHER],
+			&s.dtms[IOT_READ], &s.dtms[IOT_WRITE], &s.dtms[IOT_OTHER],
 			&s.hit[IOT_READ][0], &s.hit[IOT_READ][1],
 			&s.hit[IOT_READ][2], &s.hit[IOT_READ][3],
 			&s.hit[IOT_READ][4], &s.hit[IOT_READ][5],
@@ -961,6 +992,13 @@ static inline void block_cgroup_show_header(void)
 	if (g_extend)
 		p += snprintf(p, e - p,
 			"%8s %8s %8s ", "%rtm", "%wtm", "%otm");
+
+	/* %dtm */
+	p += snprintf(p, e - p, "%8s ", "%dtm");
+	/* %rtm %wtm %otm */
+	if (g_extend)
+		p += snprintf(p, e - p,
+			"%8s %8s %8s ", "%rdtm", "%wdtm", "%odtm");
 
 	/* %hit0 %hit1  %hit2  %hit3  %hit4  %hit5  %hit6  %hit7 */
 	p += snprintf(p, e - p,

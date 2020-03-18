@@ -49,7 +49,7 @@ struct block_device {
 
 struct block_cgroup;
 
-#define IOTRACK_STAT_FIELD_NR	(2 + IOT_NR * 3 + 4 + IOT_NR * LAT_BUCKET_NR)
+#define IOTRACK_STAT_FIELD_NR	(2 + 4 + IOT_NR * 4 + IOT_NR * LAT_BUCKET_NR)
 struct iotrack_stat {
 	int major;
 	int minor;
@@ -64,6 +64,7 @@ struct iotrack_stat {
 	unsigned long long ios[IOT_NR];
 	unsigned long long sts[IOT_NR];
 	unsigned long long tms[IOT_NR];
+	unsigned long long dtms[IOT_NR];
 
 	/* latency distribution */
 	unsigned long long hit[IOT_NR][LAT_BUCKET_NR];
@@ -80,12 +81,14 @@ struct blk_iotrack {
 	unsigned long long delta_ios[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
 	unsigned long long delta_sts[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
 	unsigned long long delta_tms[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
+	unsigned long long delta_dtms[IOT_NR + 1];	/* r(ead) + w(rite) + o(ther) */
 
 	float iops[IOT_NR + 1];		/* r/s, w/s, o/s, io/s */
 	float bps[IOT_NR + 1];		/* rMB/s, wMB/s, oMB/s, MB/s */
 	float io_pct[IOT_NR + 1];	/* cgroup.ios[i] / disk.ios[IOT_NR] */
 	float b_pct[IOT_NR + 1];	/* cgroup.sts[i] / disk.sts[IOT_NR] */
 	float tm_pct[IOT_NR + 1];	/* cgroup.tms[i] / disk.tms[IOT_NR] */
+	float dtm_pct[IOT_NR + 1];	/* cgroup.dtms[i] / disk.dtms[IOT_NR] */
 	/*
 	 * %rhit, %whit, %ohit, %hit
 	 * hit_rate[i][j] = delta_iotrack_stat.hit[i][j] / delta_ios[IOT_NR];
