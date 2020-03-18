@@ -80,12 +80,6 @@ The basic field show the overal io statistics include both read, write and flush
 The extend fileds show io statistics sperately for read, write, and others.
 
 #### Basic field
-	mean(us): the mean(average) io latency since this cgroup created.
-
-	min(us): the minimum io latency since this cgroup created.
-
-	max(us): the maximun io latency since this cgroup created.
-
 	io/s: io per second, include read, write and others.
 
 	MB/s: Mibibyte per second,include read, write and others.
@@ -109,6 +103,8 @@ The extend fileds show io statistics sperately for read, write, and others.
 		dtm = time_complete - time_driver.
 		You can just thinking it's disk hardware time, even it includes irq service time.
 		Compare to blktrace, it stands for the time D2C.
+
+	%d2c: the percentile of d2c of q2c, delta_io_disk_time/delta_io_time.
 
 	%hit0: the perctile of the number of io's latency less than
 		latency_bucket[0]'s threshold at cgroup level.
@@ -143,6 +139,12 @@ The extend fileds show io statistics sperately for read, write, and others.
 	cgroup: the cgroup path
 
 #### Extend field
+	mean(us): the mean(average) io latency since this cgroup created.
+
+	min(us): the minimum io latency since this cgroup created.
+
+	max(us): the maximun io latency since this cgroup created.
+
 	rio/s: read io per secons.
 
 	wio/s: write io per secons.
@@ -178,6 +180,12 @@ The extend fileds show io statistics sperately for read, write, and others.
 	%wdtm: the cgroup's write io time on disk(D2C) percentile at disk level.
 
 	%odtm: the cgroup's other io time on disk(D2C) percentile at disk level.
+
+	%rd2c: the percentile of d2c of q2c for cgroup read io.
+
+	%wd2c: the percentile of d2c of q2c for cgroup write io.
+
+	%od2c: the percentile of d2c of q2c for cgroup others io.
 
 	%rhit0: the perctile of the number of read io's latency less than
 		latency_bucket[0]'s threshold at cgroup level.
