@@ -591,19 +591,21 @@ static void block_gq_calc_data(struct block_gq *gq)
 		iotrack->b_pct[i] = total_device > 0 ?
 			100.0 * iotrack->delta_sts[i] / total_device : 0.0;
 
-	/* time percentile: %rtm %wtm %otm %tm */
-	total_device = (float)root_gq->iotrack.delta_tms[IOT_NR];
+	/* time delta:rtm wtm otm tm */
 	total = 0;
 	for (i = 0; i < IOT_NR; i++) {
 		delta = (float)(now->tms[i] - last->tms[i]);
-		iotrack->tm_pct[i] = total_device > 0 ?
-			100.0 * delta / total_device : 0.0;
 		iotrack->delta_tms[i] = delta;
 		total += delta;
 	}
-	iotrack->tm_pct[IOT_NR] = total_device > 0 ?
-			100.0 * total / total_device : 0.0;
 	iotrack->delta_tms[IOT_NR] = total;
+
+	/* time percentile: %rtm %wtm %otm %tm */
+	total_device = (float)root_gq->iotrack.delta_tms[IOT_NR];
+	for (i = 0; i < IOT_NR + 1; i++) {
+		iotrack->tm_pct[i] = total_device > 0 ?
+			100.0 * iotrack->delta_tms[i] / total_device : 0.0;
+	}
 
 	/* cgroup level */
 	for (j = 0; j < LAT_BUCKET_NR; j++)
