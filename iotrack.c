@@ -623,6 +623,12 @@ static void block_gq_calc_data(struct block_gq *gq)
 			100.0 * iotrack->delta_dtms[i] / total_device : 0.0;
 	}
 
+	/* %d2c = d2c/q2c = delta_dtms[i]/delta_tms[i] */
+	for (i = 0; i < IOT_NR + 1; i++) {
+		iotrack->d2c_pct[i] = iotrack->delta_tms[i] > 0 ?
+			100.0 * iotrack->delta_dtms[i] / iotrack->delta_tms[i] : 0.0;
+	}
+
 	/* cgroup level */
 	for (j = 0; j < LAT_BUCKET_NR; j++)
 		total_hit[j] = 0.0;
@@ -744,6 +750,19 @@ static void block_gq_show_data(struct block_gq *gq)
 			, iotrack->dtm_pct[IOT_READ]
 			, iotrack->dtm_pct[IOT_WRITE]
 			, iotrack->dtm_pct[IOT_OTHER]
+			);
+	}
+
+	/* %d2c */
+	p += snprintf(p, e - p, "%8.2f ", iotrack->d2c_pct[IOT_NR]);
+	/* %rd2c %wd2c %od2c */
+	if (g_extend) {
+		/* do not use for loop here, avoid new inserted IOT_XXX */
+		p += snprintf(p, e - p,
+			"%8.2f %8.2f %8.2f "
+			, iotrack->d2c_pct[IOT_READ]
+			, iotrack->d2c_pct[IOT_WRITE]
+			, iotrack->d2c_pct[IOT_OTHER]
 			);
 	}
 
@@ -1004,6 +1023,13 @@ static inline void block_cgroup_show_header(void)
 	if (g_extend)
 		p += snprintf(p, e - p,
 			"%8s %8s %8s ", "%rdtm", "%wdtm", "%odtm");
+
+	/* %d2c */
+	p += snprintf(p, e - p, "%8s ", "%d2c");
+	/* %rd2c %wd2c %od2c */
+	if (g_extend)
+		p += snprintf(p, e - p,
+			"%8s %8s %8s ", "%rd2c", "%wd2c", "%od2c");
 
 	/* %hit0 %hit1  %hit2  %hit3  %hit4  %hit5  %hit6  %hit7 */
 	p += snprintf(p, e - p,

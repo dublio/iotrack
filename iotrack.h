@@ -89,6 +89,9 @@ struct blk_iotrack {
 	float b_pct[IOT_NR + 1];	/* cgroup.sts[i] / disk.sts[IOT_NR] */
 	float tm_pct[IOT_NR + 1];	/* cgroup.tms[i] / disk.tms[IOT_NR] */
 	float dtm_pct[IOT_NR + 1];	/* cgroup.dtms[i] / disk.dtms[IOT_NR] */
+
+	/* %tmdisk = d2c/q2c = delta_dtms[i]/delta_tms[i] */
+	float d2c_pct[IOT_NR + 1];
 	/*
 	 * %rhit, %whit, %ohit, %hit
 	 * hit_rate[i][j] = delta_iotrack_stat.hit[i][j] / delta_ios[IOT_NR];
