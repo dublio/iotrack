@@ -101,6 +101,14 @@ The extend fileds show io statistics sperately for read, write, and others.
 	%tm: the cgroup's io total time percentile at disk level.
 		%tm = cgroup.disk.io_time_sum / disk.io_time_sum.
 		The io_time_sum stands for the sum of all completed io.
+		tm = time_complete - time_queue.
+		Compare to blktrace, it nearly stands for Q2C.
+
+	%dtm: the cgroup's io total disk time percentile at disk level.
+		It's different from "%tm".
+		dtm = time_complete - time_driver.
+		You can just thinking it's disk hardware time, even it includes irq service time.
+		Compare to blktrace, it stands for the time D2C.
 
 	%hit0: the perctile of the number of io's latency less than
 		latency_bucket[0]'s threshold at cgroup level.
@@ -158,6 +166,18 @@ The extend fileds show io statistics sperately for read, write, and others.
 	%wMB: the cgroup's write io data(Mibibyte) percentile at disk level.
 
 	%oMB: the cgroup's other io data(Mibibyte) percentile at disk level, like flush, discard.
+
+	%rtm: the cgroup's read io time(Q2C) percentile at disk level.
+
+	%wtm: the cgroup's write io time(Q2C) percentile at disk level.
+
+	%otm: the cgroup's other io time(Q2C) percentile at disk level.
+
+	%rdtm: the cgroup's read io time on disk(D2C) percentile at disk level.
+
+	%wdtm: the cgroup's write io time on disk(D2C) percentile at disk level.
+
+	%odtm: the cgroup's other io time on disk(D2C) percentile at disk level.
 
 	%rhit0: the perctile of the number of read io's latency less than
 		latency_bucket[0]'s threshold at cgroup level.
