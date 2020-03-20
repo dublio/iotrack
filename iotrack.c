@@ -800,14 +800,20 @@ static void block_gq_show_data(struct block_gq *gq)
 
 static int block_cgroup_init_one(struct block_cgroup *g)
 {
-	char file[PATH_MAX + 32];
+	char file[PATH_MAX];
 	FILE *fp;
+	int ret, len = (int)sizeof(file);
 
 	/* block_cgroup second stage initialization */
 	INIT_LIST_HEAD(&g->gq_head);
 
 	/* init blk-iotrack */
-	snprintf(file, sizeof(file), "%s/blkio.iotrack.stat", g->path);
+	ret = snprintf(file, sizeof(file), "%s/%s/blkio.iotrack.stat",
+		BLOCK_CGROUP_ROOT, g->path);
+	if (ret >= len) {
+		log("file path is too long %s\n", file);
+		return -1;
+	}
 
 	fp = fopen(file, "r");
 	if (!fp) {
