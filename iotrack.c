@@ -437,16 +437,19 @@ static int block_cgroup_alloc_one(const char *path)
 	INIT_LIST_HEAD(&g->node);
 	snprintf(g->path, sizeof(g->path), "%s", path);
 
+	dbg("add cgroup %s\n", path);
+
 	/*
 	 * _MUST_ use list_add_tail to keep root block_cgroup was the first
 	 * element when iterate list by list_for_each_entry.
 	 * So the root block_cgroup's data was firstly be read and calculated.
 	 */
-	list_add_tail(&g->node, &g_block_cgroup);
-	dbg("add cgroup %s\n", path);
-
-	if (!strcmp(path, BLOCK_CGROUP_ROOT))
+	if (!strcmp(path, BLOCK_CGROUP_ROOT)) {
 		g_block_cgroup_root = g;
+		list_add(&g->node, &g_block_cgroup);
+	} else {
+		list_add_tail(&g->node, &g_block_cgroup);
+	}
 
 	return 0;
 }
@@ -836,6 +839,10 @@ static int block_cgroup_init(void)
 {
 	struct block_cgroup *g, *tmp;
 
+	/* always monitor root block cgroup */
+	if (block_cgroup_alloc_one(BLOCK_CGROUP_ROOT))
+		return -1;
+
 	list_for_each_entry_safe(g, tmp, &g_block_cgroup, node) {
 		/*
 		 * if a cgroup init failed, just ignore it and remove it from
@@ -1205,10 +1212,6 @@ out:
 
 int main(int argc, char **argv)
 {
-	/* monitor root block cgroup */
-	if (block_cgroup_alloc_one(BLOCK_CGROUP_ROOT))
-		return -1;
-
 	if (parse_args(argc, argv))
 		goto cleanup;
 
