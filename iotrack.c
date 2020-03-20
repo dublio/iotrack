@@ -420,7 +420,7 @@ static inline bool block_cgroup_is_exist(const char *path)
  *
  * @path: /sys/fs/cgroup/blkio/xxx/
  */
-static int block_cgroup_alloc_one(const char *path)
+static int block_cgroup_alloc_one(const char *path, bool is_root)
 {
 	struct block_cgroup *g;
 
@@ -444,7 +444,7 @@ static int block_cgroup_alloc_one(const char *path)
 	 * element when iterate list by list_for_each_entry.
 	 * So the root block_cgroup's data was firstly be read and calculated.
 	 */
-	if (!strcmp(path, BLOCK_CGROUP_ROOT)) {
+	if (is_root) {
 		g_block_cgroup_root = g;
 		list_add(&g->node, &g_block_cgroup);
 	} else {
@@ -840,7 +840,7 @@ static int block_cgroup_init(void)
 	struct block_cgroup *g, *tmp;
 
 	/* always monitor root block cgroup */
-	if (block_cgroup_alloc_one(BLOCK_CGROUP_ROOT))
+	if (block_cgroup_alloc_one(BLOCK_CGROUP_ROOT, true))
 		return -1;
 
 	list_for_each_entry_safe(g, tmp, &g_block_cgroup, node) {
@@ -1178,7 +1178,7 @@ static int parse_args(int argc, char **argv)
 	while ((opt = getopt_long(argc, argv, "d:g:i:xhD", g_option, &index)) != -1) {
 		switch (opt) {
 		case 'g':
-			if (block_cgroup_alloc_one(optarg))
+			if (block_cgroup_alloc_one(optarg, false))
 				goto out;
 			break;
 		case 'd':
