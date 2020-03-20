@@ -807,15 +807,33 @@ static int block_cgroup_init_one(struct block_cgroup *g)
 	/* block_cgroup second stage initialization */
 	INIT_LIST_HEAD(&g->gq_head);
 
-	/* init blk-iotrack */
-	ret = snprintf(file, sizeof(file), "%s/%s/blkio.iotrack.stat",
-		BLOCK_CGROUP_ROOT, g->path);
+	/*
+	 * try to open file for cgroupv1 and v2
+	 * cgroup v1: blkio.iotrack.stat
+	 * cgroup v2: io.iotrack.stat
+	 *
+	 */
+	ret = snprintf(file, sizeof(file), "%s/%s/%s",
+		BLOCK_CGROUP_ROOT, g->path, IOTRACK_STAT_FILE_V1);
 	if (ret >= len) {
 		log("file path is too long %s\n", file);
 		return -1;
 	}
 
 	fp = fopen(file, "r");
+
+	/* if failed to open blkio.iotrack.stat, try io.iotrack.stat */
+	if (!fp) {
+		ret = snprintf(file, sizeof(file), "%s/%s/%s",
+			BLOCK_CGROUP_ROOT, g->path, IOTRACK_STAT_FILE_V2);
+		if (ret >= len) {
+			log("file path is too long %s\n", file);
+			return -1;
+		}
+
+		fp = fopen(file, "r");
+	}
+
 	if (!fp) {
 		log("failed to open %s\n", file);
 		return -1;

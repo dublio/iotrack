@@ -5,6 +5,9 @@
 #define BLOCK_CGROUP_ROOT "/sys/fs/cgroup/blkio"
 #define HEADER_PER_DATA 1
 
+#define IOTRACK_STAT_FILE_V1 "blkio.iotrack.stat"
+#define IOTRACK_STAT_FILE_V2 "io.iotrack.stat"
+
 /* align with kernel block/blk-iotrack.c */
 #define LAT_BUCKET_NR 8
 enum {
