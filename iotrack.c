@@ -40,6 +40,7 @@ const char *g_name;
 unsigned long long g_delta_time_ms = 1000;
 
 struct block_cgroup *g_block_cgroup_root;
+char g_block_cgroup_root_path[PATH_MAX];
 
 
 static void block_device_deinit_one(struct block_device *dev);
@@ -57,6 +58,17 @@ do { \
 	if (g_debug) \
 		fprintf(stderr, "%s[%d] "fmt, __func__, __LINE__, ## __VA_ARGS__); \
 } while(0)
+
+static void block_cgroup_root_path_init(const char *path)
+{
+	snprintf(g_block_cgroup_root_path, sizeof(g_block_cgroup_root_path),
+		"%s", path);
+}
+
+static void __attribute__((constructor)) iotrack_pre_setup(void)
+{
+		block_cgroup_root_path_init(BLOCK_CGROUP_ROOT);
+}
 
 static inline mode_t stat_mode(const char *path)
 {
@@ -814,7 +826,7 @@ static int block_cgroup_init_one(struct block_cgroup *g)
 	 *
 	 */
 	ret = snprintf(file, sizeof(file), "%s/%s/%s",
-		BLOCK_CGROUP_ROOT, g->path, IOTRACK_STAT_FILE_V1);
+		g_block_cgroup_root_path, g->path, IOTRACK_STAT_FILE_V1);
 	if (ret >= len) {
 		log("file path is too long %s\n", file);
 		return -1;
@@ -825,7 +837,7 @@ static int block_cgroup_init_one(struct block_cgroup *g)
 	/* if failed to open blkio.iotrack.stat, try io.iotrack.stat */
 	if (!fp) {
 		ret = snprintf(file, sizeof(file), "%s/%s/%s",
-			BLOCK_CGROUP_ROOT, g->path, IOTRACK_STAT_FILE_V2);
+			g_block_cgroup_root_path, g->path, IOTRACK_STAT_FILE_V2);
 		if (ret >= len) {
 			log("file path is too long %s\n", file);
 			return -1;
@@ -864,7 +876,7 @@ static int block_cgroup_init(void)
 	struct block_cgroup *g, *tmp;
 
 	/* always monitor root block cgroup */
-	if (block_cgroup_alloc_one(BLOCK_CGROUP_ROOT, true))
+	if (block_cgroup_alloc_one("/", true))
 		return -1;
 
 	list_for_each_entry_safe(g, tmp, &g_block_cgroup, node) {
@@ -1163,12 +1175,13 @@ static void cleanup_all(void)
 
 static void usage(void)
 {
-	fprintf(stderr, "%s [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk]\n", g_name);
+	fprintf(stderr, "%s [-r root_cgroup] [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk]\n", g_name);
 	fprintf(stderr, "%s  -h  --help: show this help\n", g_name);
 	fprintf(stderr, "    -x, --extend: enable extend fields, the extend field show the statistics for read,write and others\n");
 	fprintf(stderr, "    -D, --debug: enable debug log\n");
 	fprintf(stderr, "    -d disk, --device disk: specify the disk name, i.e. -d nvme0n1 -d sda\n");
 	fprintf(stderr, "    -i interval_ms, --interval interval_ms: specify the sampling interval\n");
+	fprintf(stderr, "    -r root_cgroup, --root root_cgroup: specify the root block cgroup, i,e. /sys/fs/cgroup/blkio/\n");
 }
 
 static int set_interval(const char *arg)
@@ -1189,6 +1202,7 @@ static struct option g_option[] = {
 	{"interval",	required_argument,	0, 'i'},
 	{"debug",	no_argument,		0, 'D'},
 	{"device",	required_argument,	0, 'd'},
+	{"root",	required_argument,	0, 'r'},
 	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
 };
@@ -1199,7 +1213,7 @@ static int parse_args(int argc, char **argv)
 
 	g_name = argv[0];
 
-	while ((opt = getopt_long(argc, argv, "d:g:i:xhD", g_option, &index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "r:d:g:i:xhD", g_option, &index)) != -1) {
 		switch (opt) {
 		case 'g':
 			if (block_cgroup_alloc_one(optarg, false))
@@ -1208,6 +1222,9 @@ static int parse_args(int argc, char **argv)
 		case 'd':
 			if (block_device_init_one(optarg))
 				goto out;
+			break;
+		case 'r':
+			block_cgroup_root_path_init(optarg);
 			break;
 		case 'x':
 			g_extend = 1;

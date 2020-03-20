@@ -16,7 +16,12 @@ Tracking io statistics base on kernel/block/blk-iotrack.
 You enable blk-iotrack by set  `BLK_CGROUP_IOTRACK=y` in your kernel configuration.
 
 ## Arguments
-	iotrack [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk]
+	iotrack [-r root_cgroup] [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk]
+
+	-r root_cgroup, --root root_cgroup: specify the root block cgroup path,
+		iotrack work with /sys/fs/cgroup/blkio/ by default, if user use cgroup2 or
+		mount cgroup1 on other path, just use -r aruments, like:
+		iotrack -r /sys/fs/cgroup/unified for cgroup2 in fedora os.
 
 	-g cgroup, --cgroup cgroup: monitor a cgroup's io statistics.
 			If you want to monitor multipe cgroup, you can use this option multiple times, i.e.
