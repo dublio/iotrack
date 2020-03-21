@@ -2,9 +2,14 @@
 
 Tracking io statistics base on kernel/block/blk-iotrack.
 
+Classicall cgroup file path for blk-iotrack:
+
+	cgroup v1: /sys/fs/cgroup/blkio/blkio.iotrack.stat
+	cgroup v2: /sys/fs/cgroup/io.iotrack.stat
+
 * Collect disk level io statistics
 	* nearly same as iostat with an extra `conc` field.
-	* Support 8 configurable latency buckets in block cgroup `blkio.iotrack.lat_thresh`.
+	* Support 8 configurable latency buckets in block cgroup `blkio.iotrack.lat_thresh` or `io.iotrack.lat_thresh` for cgroup v2.
 	* Collect disk's io latency distribution at each latency threshold.
 * Collect block cgroup level various io statistics base on kernel/block/blk-iotrack.
 	* Collect cgroup's io latency distribution at each latency threshold.
