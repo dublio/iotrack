@@ -833,7 +833,10 @@ static void block_gq_show_data(struct block_gq *gq)
 				iotrack->hit_rate[IOT_OTHER][i]);
 	}
 
-	p += snprintf(p, e - p, "%s\n", gq->grp->path);
+	if (gq->grp->path[0] == '/')
+		p += snprintf(p, e - p, "%s\n", gq->grp->path);
+	else
+		p += snprintf(p, e - p, "/%s\n", gq->grp->path);
 
 	fprintf(stderr, "%s", buf);
 }
