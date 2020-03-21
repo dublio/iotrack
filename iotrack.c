@@ -67,7 +67,35 @@ static void block_cgroup_root_path_init(const char *path)
 
 static void __attribute__((constructor)) iotrack_pre_setup(void)
 {
-		block_cgroup_root_path_init(BLOCK_CGROUP_ROOT);
+	char file[PATH_MAX];
+	struct stat s;
+	int ret;
+
+	/* check /sys/fs/cgroup/blkio/blkio.iotrack.stat */
+	snprintf(file, sizeof(file), "%s/%s", BLOCK_CGROUP_ROOT_V1,
+			IOTRACK_STAT_FILE_V1);
+
+	dbg("detect: %s\n", file);
+	ret = stat(file, &s);
+	if (!ret) {
+		block_cgroup_root_path_init(BLOCK_CGROUP_ROOT_V1);
+		return;
+	}
+
+	/*
+	 * check /sys/fs/cgroup/io.iotrack.stat, cgroup v2 mount point
+	 * may not be this for some OS, user should use -r to speicy
+	 * that.
+	 */
+	snprintf(file, sizeof(file), "%s/%s", BLOCK_CGROUP_ROOT_V2,
+			IOTRACK_STAT_FILE_V2);
+
+	dbg("detect: %s\n", file);
+	ret = stat(file, &s);
+	if (!ret) {
+		block_cgroup_root_path_init(BLOCK_CGROUP_ROOT_V2);
+		return;
+	}
 }
 
 static inline mode_t stat_mode(const char *path)

@@ -2,7 +2,8 @@
 #define __IOTRACK_H__
 
 #define BLOCK_DEVICE_DIR "/sys/block"
-#define BLOCK_CGROUP_ROOT "/sys/fs/cgroup/blkio"
+#define BLOCK_CGROUP_ROOT_V1 "/sys/fs/cgroup/blkio"
+#define BLOCK_CGROUP_ROOT_V2 "/sys/fs/cgroup"
 #define HEADER_PER_DATA 1
 
 #define IOTRACK_STAT_FILE_V1 "blkio.iotrack.stat"
