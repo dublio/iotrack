@@ -249,6 +249,8 @@ The extend fileds show io statistics sperately for read, write, and others.
 	that means the main latency cames from software, it was
 	throttled by softwre.
 
+	$ iotrack -d nvme1n1 -g /test1 -g /test2
+
 Sample result:
 
 	Time                     Device             rrqm/s   wrqm/s      r/s      w/s    rMB/s    wMB/s  avgrqkb avgqu-sz    await  r_await  w_await    svctm    %util     conc
@@ -263,6 +265,7 @@ Sample result:
 #### sample2
 track test1,test1 for all disk
 
+	iotrack
 
 	Time                     Device             rrqm/s   wrqm/s      r/s      w/s    rMB/s    wMB/s  avgrqkb avgqu-sz    await  r_await  w_await    svctm    %util     conc
 	2020-03-21 02:37:33.801  nvme0n1              0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00
