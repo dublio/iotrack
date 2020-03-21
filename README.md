@@ -229,17 +229,30 @@ The extend fileds show io statistics sperately for read, write, and others.
 ### Sample
 
 #### sample1
-test1: bfq weight = 800
-test2: bfq weigth = 100
-randread 4K
+	cgroup /test1: bfq weight = 800
+	cgroup /test2: bfq weight = 100
+	randread 4K
+
+* The root block cgroup `"/"` shows the io statistics for whole ssd disk.
+
+* test1 use disk's `%67` iops and bps.
+
+* `%dtm` stands for the on disk time, test1 cgroup get `67%` of whole disk,
+	that means test1 gets more disk time than test2.
+
+* For test2's `%d2c`, there is only `17%` latency cost at hardware disk,
+	that means the main latency cames from software, it was
+	throttled by softwre.
+
+Sample result:
 
 	Time                     Device             rrqm/s   wrqm/s      r/s      w/s    rMB/s    wMB/s  avgrqkb avgqu-sz    await  r_await  w_await    svctm    %util     conc
 	2020-03-21 03:08:15.650  nvme1n1              2.00     0.00 44580.00     0.00   174.16     0.00     4.00     5.84     0.24     0.24     0.00     0.00   100.30     5.82
 
 	Time                     Device               io/s     MB/s      %io      %MB      %tm     %dtm     %d2c    %hit0    %hit1    %hit2    %hit3    %hit4    %hit5    %hit6    %hit7 cgroup
 	2020-03-21 03:08:15.650  nvme1n1          44588.00   174.17   100.00   100.00   100.00   100.00    38.46     0.25    45.27    95.90    98.33    99.47    99.85    99.92    99.95 /
-	2020-03-21 03:08:15.650  nvme1n1          30206.00   117.99    67.74    67.74    29.44    67.29    87.90     0.35    47.82    99.22    99.98    99.99    99.99   100.00   100.00 test1
-	2020-03-21 03:08:15.650  nvme1n1          14370.00    56.13    32.23    32.23    70.55    32.69    17.82     0.03    39.89    88.92    94.88    98.37    99.53    99.77    99.85 test2
+	2020-03-21 03:08:15.650  nvme1n1          30206.00   117.99    67.74    67.74    29.44    67.29    87.90     0.35    47.82    99.22    99.98    99.99    99.99   100.00   100.00 /test1
+	2020-03-21 03:08:15.650  nvme1n1          14370.00    56.13    32.23    32.23    70.55    32.69    17.82     0.03    39.89    88.92    94.88    98.37    99.53    99.77    99.85 /test2
 
 
 #### sample2
