@@ -672,6 +672,13 @@ static void block_gq_calc_data(struct block_gq *gq)
 			100.0 * iotrack->delta_dtms[i] / iotrack->delta_tms[i] : 0.0;
 	}
 
+	/* await[i] = delta_tms[i]/delta_ios[i] */
+	for (i = 0; i < IOT_NR + 1; i++) {
+		iotrack->await[i] = iotrack->delta_ios[i] > 0 ?
+					iotrack->delta_tms[i] / 1000000.0 /
+					iotrack->delta_ios[i] : 0.0;
+	}
+
 	/* cgroup level */
 	for (j = 0; j < LAT_BUCKET_NR; j++)
 		total_hit[j] = 0.0;
@@ -806,6 +813,19 @@ static void block_gq_show_data(struct block_gq *gq)
 			, iotrack->d2c_pct[IOT_READ]
 			, iotrack->d2c_pct[IOT_WRITE]
 			, iotrack->d2c_pct[IOT_OTHER]
+			);
+	}
+
+	/* await */
+	p += snprintf(p, e - p, "%8.2f ", iotrack->await[IOT_NR]);
+	/* rawait wawait oawait */
+	if (g_extend) {
+		/* do not use for loop here, avoid new inserted IOT_XXX */
+		p += snprintf(p, e - p,
+			"%8.2f %8.2f %8.2f "
+			, iotrack->await[IOT_READ]
+			, iotrack->await[IOT_WRITE]
+			, iotrack->await[IOT_OTHER]
 			);
 	}
 
@@ -1104,6 +1124,13 @@ static inline void block_cgroup_show_header(void)
 	if (g_extend)
 		p += snprintf(p, e - p,
 			"%8s %8s %8s ", "%rd2c", "%wd2c", "%od2c");
+
+	/* await (ms) */
+	p += snprintf(p, e - p, "%8s ", "await");
+	/* %rawait %wawait %oawait */
+	if (g_extend)
+		p += snprintf(p, e - p,
+			"%8s %8s %8s ", "rawait", "wawait", "oawait");
 
 	/* %hit0 %hit1  %hit2  %hit3  %hit4  %hit5  %hit6  %hit7 */
 	p += snprintf(p, e - p,

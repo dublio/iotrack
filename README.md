@@ -116,6 +116,8 @@ The extend fileds show io statistics sperately for read, write, and others.
 
 	%d2c: the percentile of d2c of q2c, delta_io_disk_time/delta_io_time.
 
+	await: average io latency(ms).
+
 	%hit0: the perctile of the number of io's latency less than
 		latency_bucket[0]'s threshold at cgroup level.
 
@@ -196,6 +198,12 @@ The extend fileds show io statistics sperately for read, write, and others.
 	%wd2c: the percentile of d2c of q2c for cgroup write io.
 
 	%od2c: the percentile of d2c of q2c for cgroup others io.
+
+	rawait: the average io latency(ms) for read.
+
+	wawait: the average io latency(ms) for write.
+
+	oawait: the average io latency(ms) for other io.
 
 	%rhit0: the perctile of the number of read io's latency less than
 		latency_bucket[0]'s threshold at cgroup level.
