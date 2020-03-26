@@ -241,8 +241,8 @@ static inline void iostat_show_header(void)
 static void iostat_show(struct block_device *dev)
 {
 	fprintf(stderr, "%-24s %-16s "		/* timestamp, name */
-			"%-8.2f %-8.2f "	/* rrqm/s   wrqm/s */
-			"%-8.2f %-8.2f "	/* r/s     w/s */
+			"%-8.0f %-8.0f "	/* rrqm/s   wrqm/s */
+			"%-8.0f %-8.0f "	/* r/s     w/s */
 			"%-8.2f %-8.2f "	/* rMB/s    wMB/s */
 			"%-8.2f %-8.2f "	/* avgrqkb avgqu-sz */
 			"%-8.2f %-8.2f %-8.2f "	/* await r_await w_await */
