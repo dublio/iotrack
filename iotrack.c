@@ -219,13 +219,13 @@ static inline void iostat_show_header(void)
 		return;
 
 	fprintf(stderr, "%-24s %-16s "		/* timestamp, name */
-			"%8s %8s "	/* rrqm/s   wrqm/s */
-			"%8s %8s "	/* r/s     w/s */
-			"%8s %8s "	/* rMB/s    wMB/s */
-			"%8s %8s "	/* avgrqkb avgqu-sz */
-			"%8s %8s %8s "	/* await r_await w_await */
-			"%8s %8s "	/* svctm  %util */
-			"%8s\n"		/* conc */
+			"%-8s %-8s "	/* rrqm/s   wrqm/s */
+			"%-8s %-8s "	/* r/s     w/s */
+			"%-8s %-8s "	/* rMB/s    wMB/s */
+			"%-8s %-8s "	/* avgrqkb avgqu-sz */
+			"%-8s %-8s %-8s "	/* await r_await w_await */
+			"%-8s %-8s "	/* svctm  %util */
+			"%-8s\n"		/* conc */
 			,
 			"Time", "Device",
 			"rrqm/s", "wrqm/s",
@@ -241,13 +241,13 @@ static inline void iostat_show_header(void)
 static void iostat_show(struct block_device *dev)
 {
 	fprintf(stderr, "%-24s %-16s "		/* timestamp, name */
-			"%8.2f %8.2f "	/* rrqm/s   wrqm/s */
-			"%8.2f %8.2f "	/* r/s     w/s */
-			"%8.2f %8.2f "	/* rMB/s    wMB/s */
-			"%8.2f %8.2f "	/* avgrqkb avgqu-sz */
-			"%8.2f %8.2f %8.2f "	/* await r_await w_await */
-			"%8.2f %8.2f "	/* svctm  %util */
-			"%8.2f\n"		/* conc */
+			"%-8.2f %-8.2f "	/* rrqm/s   wrqm/s */
+			"%-8.2f %-8.2f "	/* r/s     w/s */
+			"%-8.2f %-8.2f "	/* rMB/s    wMB/s */
+			"%-8.2f %-8.2f "	/* avgrqkb avgqu-sz */
+			"%-8.2f %-8.2f %-8.2f "	/* await r_await w_await */
+			"%-8.2f %-8.2f "	/* svctm  %util */
+			"%-8.2f\n"		/* conc */
 			,
 			g_ts, dev->name,		/* timestamp, name */
 			dev->rrqm, dev->wrqm,		/* rrqm/s   wrqm/s */
@@ -720,18 +720,18 @@ static void block_gq_show_data(struct block_gq *gq)
 
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "	/* mean(u.2f) min(u.2f) max(u.2f) */
+			"%-8.2f %-8.2f %-8.2f "	/* mean(u.2f) min(u.2f) max(u.2f) */
 			,(float)iotrack->stat[g_index].mean	/ 1000.0
 			,(float)iotrack->stat[g_index].min	/ 1000.0
 			,(float)iotrack->stat[g_index].max	/ 1000.0
 			);
 	/* io/s */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->iops[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.0f ", iotrack->iops[IOT_NR]);
 	/* rio/s wio/s oio/s */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.0f %-8.0f %-8.0f "
 			, iotrack->iops[IOT_READ]
 			, iotrack->iops[IOT_WRITE]
 			, iotrack->iops[IOT_OTHER]
@@ -739,12 +739,12 @@ static void block_gq_show_data(struct block_gq *gq)
 	}
 
 	/* MB/s */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->bps[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.2f ", iotrack->bps[IOT_NR]);
 	/* rMB/s wMB/s oMB/s */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.2f %-8.2f %-8.2f "
 			, iotrack->bps[IOT_READ]
 			, iotrack->bps[IOT_WRITE]
 			, iotrack->bps[IOT_OTHER]
@@ -752,12 +752,12 @@ static void block_gq_show_data(struct block_gq *gq)
 	}
 
 	/* %io */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->io_pct[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.2f ", iotrack->io_pct[IOT_NR]);
 	/* %rio %wio %oio */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.2f %-8.2f %-8.2f "
 			, iotrack->io_pct[IOT_READ]
 			, iotrack->io_pct[IOT_WRITE]
 			, iotrack->io_pct[IOT_OTHER]
@@ -765,12 +765,12 @@ static void block_gq_show_data(struct block_gq *gq)
 	}
 
 	/* %MB */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->b_pct[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.2f ", iotrack->b_pct[IOT_NR]);
 	/* %rMB %wMB %oMB */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.2f %-8.2f %-8.2f "
 			, iotrack->b_pct[IOT_READ]
 			, iotrack->b_pct[IOT_WRITE]
 			, iotrack->b_pct[IOT_OTHER]
@@ -778,12 +778,12 @@ static void block_gq_show_data(struct block_gq *gq)
 	}
 
 	/* %tm */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->tm_pct[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.2f ", iotrack->tm_pct[IOT_NR]);
 	/* %rtm %wtm %otm */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.2f %-8.2f %-8.2f "
 			, iotrack->tm_pct[IOT_READ]
 			, iotrack->tm_pct[IOT_WRITE]
 			, iotrack->tm_pct[IOT_OTHER]
@@ -791,12 +791,12 @@ static void block_gq_show_data(struct block_gq *gq)
 	}
 
 	/* %dtm */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->dtm_pct[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.2f ", iotrack->dtm_pct[IOT_NR]);
 	/* %rdtm %wdtm %odtm */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.2f %-8.2f %-8.2f "
 			, iotrack->dtm_pct[IOT_READ]
 			, iotrack->dtm_pct[IOT_WRITE]
 			, iotrack->dtm_pct[IOT_OTHER]
@@ -804,12 +804,12 @@ static void block_gq_show_data(struct block_gq *gq)
 	}
 
 	/* %d2c */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->d2c_pct[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.2f ", iotrack->d2c_pct[IOT_NR]);
 	/* %rd2c %wd2c %od2c */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.2f %-8.2f %-8.2f "
 			, iotrack->d2c_pct[IOT_READ]
 			, iotrack->d2c_pct[IOT_WRITE]
 			, iotrack->d2c_pct[IOT_OTHER]
@@ -817,12 +817,12 @@ static void block_gq_show_data(struct block_gq *gq)
 	}
 
 	/* await */
-	p += snprintf(p, e - p, "%8.2f ", iotrack->await[IOT_NR]);
+	p += snprintf(p, e - p, "%-8.2f ", iotrack->await[IOT_NR]);
 	/* rawait wawait oawait */
 	if (g_extend) {
 		/* do not use for loop here, avoid new inserted IOT_XXX */
 		p += snprintf(p, e - p,
-			"%8.2f %8.2f %8.2f "
+			"%-8.2f %-8.2f %-8.2f "
 			, iotrack->await[IOT_READ]
 			, iotrack->await[IOT_WRITE]
 			, iotrack->await[IOT_OTHER]
@@ -831,7 +831,7 @@ static void block_gq_show_data(struct block_gq *gq)
 
 	/* %hit0 %hit1  %hit2  %hit3  %hit4  %hit5  %hit6  %hit7 */
 	for (i = 0; i < LAT_BUCKET_NR; i++)
-		p += snprintf(p, e - p, "%8.2f ", iotrack->hit_rate[IOT_NR][i]);
+		p += snprintf(p, e - p, "%-8.2f ", iotrack->hit_rate[IOT_NR][i]);
 
 	/*
 	 * %rhit0  %rhit1  %rhit2  %rhit3  %rhit4  %rhit5  %rhit6  %rhit7
@@ -841,15 +841,15 @@ static void block_gq_show_data(struct block_gq *gq)
 	if (g_extend) {
 		/* rhit */
 		for (i = 0; i < LAT_BUCKET_NR; i++)
-			p += snprintf(p, e - p, "%8.2f ",
+			p += snprintf(p, e - p, "%-8.2f ",
 				iotrack->hit_rate[IOT_READ][i]);
 		/* rhit */
 		for (i = 0; i < LAT_BUCKET_NR; i++)
-			p += snprintf(p, e - p, "%8.2f ",
+			p += snprintf(p, e - p, "%-8.2f ",
 				iotrack->hit_rate[IOT_WRITE][i]);
 		/* rhit */
 		for (i = 0; i < LAT_BUCKET_NR; i++)
-			p += snprintf(p, e - p, "%8.2f ",
+			p += snprintf(p, e - p, "%-8.2f ",
 				iotrack->hit_rate[IOT_OTHER][i]);
 	}
 
@@ -1074,67 +1074,67 @@ static inline void block_cgroup_show_header(void)
 		, "Time", "Device");
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s "		/* mean(us) min(us) max(us) */
+			"%-8s %-8s %-8s "		/* mean(us) min(us) max(us) */
 			, "mean(us)", "min(us)", "max(us)");
 	/* io/s */
-	p += snprintf(p, e - p, "%8s ", "io/s");
+	p += snprintf(p, e - p, "%-8s ", "io/s");
 	/* rio/s wio/s oio/s */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "rio/s", "wio/s", "oio/s");
+			"%-8s %-8s %-8s ", "rio/s", "wio/s", "oio/s");
 
 	/* MB/s */
-	p += snprintf(p, e - p, "%8s ", "MB/s");
+	p += snprintf(p, e - p, "%-8s ", "MB/s");
 	/* rMB/s wMB/s oMB/s */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "rMB/s", "wMB/s", "oMB/s");
+			"%-8s %-8s %-8s ", "rMB/s", "wMB/s", "oMB/s");
 
 	/* %io */
-	p += snprintf(p, e - p, "%8s ", "%io");
+	p += snprintf(p, e - p, "%-8s ", "%io");
 	/* %rio %wio %oio */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "%rio", "%wio", "%oio");
+			"%-8s %-8s %-8s ", "%rio", "%wio", "%oio");
 
 	/* %MB */
-	p += snprintf(p, e - p, "%8s ", "%MB");
+	p += snprintf(p, e - p, "%-8s ", "%MB");
 	/* %rMB %wMB %oMB */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "%rMB", "%wMB", "%oMB");
+			"%-8s %-8s %-8s ", "%rMB", "%wMB", "%oMB");
 
 	/* %tm */
-	p += snprintf(p, e - p, "%8s ", "%tm");
+	p += snprintf(p, e - p, "%-8s ", "%tm");
 	/* %rtm %wtm %otm */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "%rtm", "%wtm", "%otm");
+			"%-8s %-8s %-8s ", "%rtm", "%wtm", "%otm");
 
 	/* %dtm */
-	p += snprintf(p, e - p, "%8s ", "%dtm");
+	p += snprintf(p, e - p, "%-8s ", "%dtm");
 	/* %rtm %wtm %otm */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "%rdtm", "%wdtm", "%odtm");
+			"%-8s %-8s %-8s ", "%rdtm", "%wdtm", "%odtm");
 
 	/* %d2c */
-	p += snprintf(p, e - p, "%8s ", "%d2c");
+	p += snprintf(p, e - p, "%-8s ", "%d2c");
 	/* %rd2c %wd2c %od2c */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "%rd2c", "%wd2c", "%od2c");
+			"%-8s %-8s %-8s ", "%rd2c", "%wd2c", "%od2c");
 
 	/* await (ms) */
-	p += snprintf(p, e - p, "%8s ", "await");
+	p += snprintf(p, e - p, "%-8s ", "await");
 	/* %rawait %wawait %oawait */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s ", "rawait", "wawait", "oawait");
+			"%-8s %-8s %-8s ", "rawait", "wawait", "oawait");
 
 	/* %hit0 %hit1  %hit2  %hit3  %hit4  %hit5  %hit6  %hit7 */
 	p += snprintf(p, e - p,
-		"%8s %8s %8s %8s %8s %8s %8s %8s "
+		"%-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s "
 		, "%hit0", "%hit1", "%hit2", "%hit3"
 		, "%hit4", "%hit5", "%hit6", "%hit7"
 		);
@@ -1146,9 +1146,9 @@ static inline void block_cgroup_show_header(void)
 	 */
 	if (g_extend)
 		p += snprintf(p, e - p,
-			"%8s %8s %8s %8s %8s %8s %8s %8s "
-			"%8s %8s %8s %8s %8s %8s %8s %8s "
-			"%8s %8s %8s %8s %8s %8s %8s %8s "
+			"%-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s "
+			"%-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s "
+			"%-8s %-8s %-8s %-8s %-8s %-8s %-8s %-8s "
 			, "%rhit0", "%rhit1", "%rhit2", "%rhit3"
 			, "%rhit4", "%rhit5", "%rhit6", "%rhit7"
 			, "%whit0", "%whit1", "%whit2", "%whit3"
