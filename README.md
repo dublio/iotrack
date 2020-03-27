@@ -62,9 +62,9 @@ It adds one more field *conc* which stands for io concurrency.
 
 	w/s: write request per second.
 
-	rMB/s: read data(Mibibyte) per second.
+	rMB/s: read data(bytes) per second.
 
-	wMB/s: write data(Mibibyte) per second.
+	wMB/s: write data(bytes) per second.
 
 	avgrqkb: average request in unit of KiByte.
 
@@ -92,14 +92,14 @@ The extend fileds show io statistics sperately for read, write, and others.
 #### Basic field
 	io/s: io per second, include read, write and others.
 
-	MB/s: Mibibyte per second,include read, write and others.
+	MB/s: bytes per second,include read, write and others.
 
 	%io: the cgroup's io number percentile at disk level.
 		%io = cgroup.disk.ios/disk.ios.
 		Example: disk totally complete 100 io, and cgroup1 complete 20 io,
 		the %io = 20 / 100 = 20%.
 
-	%byte: the cgroup's io data(Mibibyte) percentile at disk level, same as
+	%byte: the cgroup's io data(bytes) percentile at disk level, same as
 			"%io".
 
 	%tm: the cgroup's io total time percentile at disk level.
@@ -165,11 +165,11 @@ The extend fileds show io statistics sperately for read, write, and others.
 
 	oio/s: other io per secons, like flush, discard.
 
-	rMB/s: read data(Mibibyte) per second.
+	rMB/s: read data(bytes) per second.
 
-	wMB/s: write data(Mibibyte) per second.
+	wMB/s: write data(bytes) per second.
 
-	oMB/s: other data(Mibibyte) per second, like flush, discard.
+	oMB/s: other data(bytes) per second, like flush, discard.
 
 	%rio: the cgroup's read io number percentile at disk level.
 
@@ -177,11 +177,11 @@ The extend fileds show io statistics sperately for read, write, and others.
 
 	%oio: the cgroup's other io number percentile at disk level, like flush, discard.
 
-	%rMB: the cgroup's read io data(Mibibyte) percentile at disk level.
+	%rMB: the cgroup's read io data(bytes) percentile at disk level.
 
-	%wMB: the cgroup's write io data(Mibibyte) percentile at disk level.
+	%wMB: the cgroup's write io data(bytes) percentile at disk level.
 
-	%oMB: the cgroup's other io data(Mibibyte) percentile at disk level, like flush, discard.
+	%oMB: the cgroup's other io data(bytes) percentile at disk level, like flush, discard.
 
 	%rtm: the cgroup's read io time(Q2C) percentile at disk level.
 
