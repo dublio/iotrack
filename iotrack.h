@@ -97,8 +97,11 @@ struct blk_iotrack {
 	/* %tmdisk = d2c/q2c = delta_dtms[i]/delta_tms[i] */
 	float d2c_pct[IOT_NR + 1];
 
-	/* await[i] = delta_tms[i]/delta_ios[i] */
+	/* await[i] = delta_dtms[i]/delta_ios[i] */
 	float await[IOT_NR + 1];
+
+	/* aq2c[i] = delta_tms[i]/delta_ios[i] */
+	float aq2c[IOT_NR + 1];
 
 	/*
 	 * %rhit, %whit, %ohit, %hit
