@@ -13,8 +13,11 @@ Classicall cgroup file path for blk-iotrack:
 	* Collect disk's io latency distribution at each latency threshold.
 * Collect block cgroup level various io statistics base on kernel/block/blk-iotrack.
 	* Collect cgroup's io latency distribution at each latency threshold.
-	* Collect cgroup io percentile of whole disk, for read, write, other and all.
+	* Collect cgroup's %io, %bytes, %dtm of whole disk, for read, write, other and all.
 	* Collect io/s, MB/s for read, write, other and all.
+	* Collect aq2c average Q2C time for this cgroup.
+	* Collect ad2c averarge D2C time for this cgroup.
+	* Collect %d2c the percentage of D2C in Q2C, %d2c = d2c/q2c;
 	* Collect min, mean, max io latency for this cgroup.
 
 
