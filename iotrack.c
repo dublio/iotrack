@@ -770,7 +770,7 @@ static void block_gq_show_data(struct block_gq *gq)
 			);
 	}
 
-	/* %MB */
+	/* %byte */
 	p += snprintf(p, e - p, "%-8.2f ", iotrack->b_pct[IOT_NR]);
 	/* %rMB %wMB %oMB */
 	if (g_extend) {
@@ -1116,8 +1116,8 @@ static inline void block_cgroup_show_header(void)
 		p += snprintf(p, e - p,
 			"%-8s %-8s %-8s ", "%rio", "%wio", "%oio");
 
-	/* %MB */
-	p += snprintf(p, e - p, "%-8s ", "%MB");
+	/* %byte */
+	p += snprintf(p, e - p, "%-8s ", "%byte");
 	/* %rMB %wMB %oMB */
 	if (g_extend)
 		p += snprintf(p, e - p,

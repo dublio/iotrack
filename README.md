@@ -99,7 +99,7 @@ The extend fileds show io statistics sperately for read, write, and others.
 		Example: disk totally complete 100 io, and cgroup1 complete 20 io,
 		the %io = 20 / 100 = 20%.
 
-	%MB: the cgroup's io data(Mibibyte) percentile at disk level, same as
+	%byte: the cgroup's io data(Mibibyte) percentile at disk level, same as
 			"%io".
 
 	%tm: the cgroup's io total time percentile at disk level.
@@ -277,7 +277,7 @@ Sample result:
 	Time                     Device           rrqm/s   wrqm/s   r/s      w/s      rMB/s    wMB/s    avgrqkb  avgqu-sz await    r_await  w_await  svctm    %util    conc
 	2020-03-27 13:42:35.264  nvme1n1          0        0        217341   0        848.98   0.00     4.00     475.03   2.28     2.28     0.00     0.00     100.20   474.08
 
-	Time                     Device           io/s     MB/s     %io      %MB      %tm      %dtm     %d2c     ad2c     aq2c     %hit0    %hit1    %hit2    %hit3    %hit4    %hit5    %hit6    %hit7    cgroup
+	Time                     Device           io/s     MB/s     %io      %byte      %tm      %dtm     %d2c     ad2c     aq2c     %hit0    %hit1    %hit2    %hit3    %hit4    %hit5    %hit6    %hit7    cgroup
 	2020-03-27 13:42:35.264  nvme1n1          217345   849.00   100.00   100.00   100.00   100.00   4.09     0.09     2.28     23.97    62.43    89.88    98.44    99.88    99.88    99.88    99.88    /
 	2020-03-27 13:42:35.264  nvme1n1          193183   754.62   88.88    88.88    45.91    84.54    7.52     0.09     1.18     26.85    64.87    90.71    98.40    99.88    99.88    99.88    99.88    /test1
 	2020-03-27 13:42:35.264  nvme1n1          24235    94.67    11.15    11.15    54.09    15.48    1.17     0.13     11.06    0.98     43.00    83.31    98.77    99.87    99.87    99.87    99.87    /test2
@@ -294,7 +294,7 @@ Sample result:
 	Time                     Device           rrqm/s   wrqm/s   r/s      w/s      rMB/s    wMB/s    avgrqkb  avgqu-sz await    r_await  w_await  svctm    %util    conc
 	2020-03-27 13:05:16.887  nvme1n1          0        0        752362   0        2938.92  0.00     4.00     69.89    0.68     0.68     0.00     0.00     100.10   69.82
 
-	Time                     Device           io/s     MB/s     %io      %MB      %tm      %dtm     %d2c     ad2c     aq2c     %hit0    %hit1    %hit2    %hit3    %hit4    %hit5    %hit6    %hit7    cgroup
+	Time                     Device           io/s     MB/s     %io      %byte    %tm      %dtm     %d2c     ad2c     aq2c     %hit0    %hit1    %hit2    %hit3    %hit4    %hit5    %hit6    %hit7    cgroup
 	2020-03-27 13:05:16.887  nvme1n1          752368   2938.94  100.00   100.00   100.00   100.00   99.91    0.68     0.68     0.00     0.00     0.02     3.07     91.20    99.66    99.99    100.00   /
 	2020-03-27 13:05:16.887  nvme1n1          376191   1469.50  50.00    50.00    50.06    50.06    99.92    0.68     0.68     0.00     0.00     0.02     3.13     91.15    99.67    99.99    100.00   /test1
 	2020-03-27 13:05:16.887  nvme1n1          376202   1469.54  50.00    50.00    49.94    49.94    99.90    0.67     0.68     0.00     0.00     0.02     3.00     91.27    99.64    99.98    100.00   /test2
@@ -312,7 +312,7 @@ Sample result:
 	2020-03-27 13:14:19.281  nvme1n1          0        0        0        0        0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00
 	2020-03-27 13:14:19.281  sda              0        0        0        0        0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00
 
-	Time                     Device           io/s     MB/s     %io      %MB      %tm      %dtm     %d2c     ad2c     aq2c     %hit0    %hit1    %hit2    %hit3    %hit4    %hit5    %hit6    %hit7    cgroup
+	Time                     Device           io/s     MB/s     %io      %byte    %tm      %dtm     %d2c     ad2c     aq2c     %hit0    %hit1    %hit2    %hit3    %hit4    %hit5    %hit6    %hit7    cgroup
 	2020-03-27 13:14:19.281  dm-1             0        0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     /
 	2020-03-27 13:14:19.281  nvme0n1          0        0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     /
 	2020-03-27 13:14:19.281  sdb              0        0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     0.00     /
