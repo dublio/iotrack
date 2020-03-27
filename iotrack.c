@@ -218,7 +218,7 @@ static inline void iostat_show_header(void)
 	if (g_loop && g_loop % HEADER_PER_DATA != 0)
 		return;
 
-	fprintf(stderr, "%-24s %-16s "		/* timestamp, name */
+	fprintf(stderr, "%-16s "	/* Devcie */
 			"%-8s %-8s "	/* rrqm/s   wrqm/s */
 			"%-8s %-8s "	/* r/s     w/s */
 			"%-8s %-8s "	/* rMB/s    wMB/s */
@@ -227,7 +227,7 @@ static inline void iostat_show_header(void)
 			"%-8s %-8s "	/* svctm  %util */
 			"%-8s\n"		/* conc */
 			,
-			"Time", "Device",
+			"Device",
 			"rrqm/s", "wrqm/s",
 			"r/s", "w/s",
 			"rMB/s", "wMB/s",
@@ -240,7 +240,7 @@ static inline void iostat_show_header(void)
 
 static void iostat_show(struct block_device *dev)
 {
-	fprintf(stderr, "%-24s %-16s "		/* timestamp, name */
+	fprintf(stderr, "%-16s "		/* Device */
 			"%-8.0f %-8.0f "	/* rrqm/s   wrqm/s */
 			"%-8.0f %-8.0f "	/* r/s     w/s */
 			"%-8.2f %-8.2f "	/* rMB/s    wMB/s */
@@ -249,7 +249,7 @@ static void iostat_show(struct block_device *dev)
 			"%-8.2f %-8.2f "	/* svctm  %util */
 			"%-8.2f\n"		/* conc */
 			,
-			g_ts, dev->name,		/* timestamp, name */
+			dev->name,			/* name */
 			dev->rrqm, dev->wrqm,		/* rrqm/s   wrqm/s */
 			dev->r, dev->w,			/* r/s     w/s */
 			dev->rmb, dev->wmb,		/* rMB/s    wMB/s */
@@ -720,8 +720,8 @@ static void block_gq_show_data(struct block_gq *gq)
 	p = buf;
 	e = buf + sizeof(buf);
 	p += snprintf(p, e - p,
-		"%-24s %-16s "		/* timestamp, name */
-		,g_ts, gq->dev->name
+		"%-16s "		/* timestamp, name */
+		, gq->dev->name
 		);
 
 	if (g_extend)
@@ -1088,9 +1088,7 @@ static inline void block_cgroup_show_header(void)
 	memset(buf, 0, sizeof(buf));
 	p = buf;
 	e = buf + sizeof(buf);
-	p += snprintf(p, e - p,
-		"%-24s %-16s "		/* timestamp, name */
-		, "Time", "Device");
+	p += snprintf(p, e - p, "%-16s ", "Device");	/* Device */
 	if (g_extend)
 		p += snprintf(p, e - p,
 			"%-8s %-8s %-8s "		/* mean(us) min(us) max(us) */
@@ -1237,7 +1235,9 @@ static int show_data()
 		return -1;;
 	}
 
-	sprintf(g_ts + strlen(g_ts), ".%03lu", t.tv_nsec/1000000);
+	/* sprintf(g_ts + strlen(g_ts), ".%03lu", t.tv_nsec/1000000); */
+
+	fprintf(stderr, "Time: %s\n", g_ts);
 
 	/* show block_device level data */
 	block_device_show_iostat();
