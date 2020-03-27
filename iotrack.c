@@ -675,7 +675,7 @@ static void block_gq_calc_data(struct block_gq *gq)
 	/* await[i] = delta_tms[i]/delta_ios[i] */
 	for (i = 0; i < IOT_NR + 1; i++) {
 		iotrack->await[i] = iotrack->delta_ios[i] > 0 ?
-					iotrack->delta_tms[i] / 1000000.0 /
+					iotrack->delta_dtms[i] / 1000000.0 /
 					iotrack->delta_ios[i] : 0.0;
 	}
 
