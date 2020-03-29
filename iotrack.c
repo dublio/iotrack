@@ -628,7 +628,7 @@ static void block_gq_calc_data(struct block_gq *gq)
 		iotrack->io_pct[i] = total_device > 0 ?
 			100.0 * iotrack->delta_ios[i] / total_device : 0.0;
 
-	/* kb percentile: %rkb %wkb %okb %kb */
+	/* byte percentile: %rbyte %wbyte %obyte %byte */
 	total_device = (float)root_gq->iotrack.delta_sts[IOT_NR];
 	for (i = 0; i < IOT_NR + 1; i++)
 		iotrack->b_pct[i] = total_device > 0 ?
