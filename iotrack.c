@@ -984,7 +984,7 @@ static int block_cgroup_read_iostat_one(struct block_cgroup *g)
 	struct block_gq *gq;
 	struct iotrack_stat s;
 	char buf[LINE_MAX];
-	int nr;
+	int nr, i = 0;
 
 	memset(&s, 0, sizeof(s));
 	memset(buf, 0, sizeof(buf));
@@ -1039,6 +1039,12 @@ static int block_cgroup_read_iostat_one(struct block_cgroup *g)
 		}
 
 		gq->iotrack.stat[g_index] = s;
+		i++;
+	}
+
+	if (!i && ferror(g->fp_iotrack_stat)) {
+		log("failed to read iotrack.stat for cgroup:%s\n", g->path);
+		return -1;
 	}
 
 	return 0;
