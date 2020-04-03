@@ -321,11 +321,26 @@ static void block_device_deinit(void)
 		block_device_deinit_one(dev);
 }
 
+static bool block_device_is_exist(const char *name)
+{
+	struct block_device *dev;
+
+	list_for_each_entry(dev, &g_block_device, node) {
+		if (!strcmp(dev->name, name))
+			return true;
+	}
+
+	return false;
+}
+
 static int block_device_init_one(const char *name)
 {
 	struct block_device *dev;
 	int fd, len, major, minor;
 	char tmp[64], file[PATH_MAX];
+
+	if (block_device_is_exist(name))
+		return 0;
 
 	dev = zmalloc(sizeof(*dev));
 	if (!dev) {
