@@ -65,7 +65,7 @@ static void block_cgroup_root_path_init(const char *path)
 		"%s", path);
 }
 
-static void __attribute__((constructor)) iotrack_pre_setup(void)
+static int iotrack_detect_cgroup(void)
 {
 	char file[PATH_MAX];
 	struct stat s;
@@ -79,7 +79,7 @@ static void __attribute__((constructor)) iotrack_pre_setup(void)
 	ret = stat(file, &s);
 	if (!ret) {
 		block_cgroup_root_path_init(BLOCK_CGROUP_ROOT_V1);
-		return;
+		return 0;
 	}
 
 	/*
@@ -94,8 +94,14 @@ static void __attribute__((constructor)) iotrack_pre_setup(void)
 	ret = stat(file, &s);
 	if (!ret) {
 		block_cgroup_root_path_init(BLOCK_CGROUP_ROOT_V2);
-		return;
+		return 0;
 	}
+
+	log ("Failed to find %s/%s or %s/%s\n",
+		BLOCK_CGROUP_ROOT_V1, IOTRACK_STAT_FILE_V1,
+		BLOCK_CGROUP_ROOT_V2, IOTRACK_STAT_FILE_V2);
+
+	return -1;
 }
 
 static inline mode_t stat_mode(const char *path)
@@ -1358,6 +1364,9 @@ out:
 
 int main(int argc, char **argv)
 {
+	if (iotrack_detect_cgroup())
+		return -1;
+
 	if (parse_args(argc, argv))
 		goto cleanup;
 
