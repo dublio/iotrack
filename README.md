@@ -45,6 +45,8 @@ You enable blk-iotrack by set  `BLK_CGROUP_IOTRACK=y` in your kernel configurati
 
 	-i interval_ms, --interval interval_ms: specify the sampling interval in unit of millisecond.
 
+	-n count, --count count: specify the sampling count.
+
 
 ## Output field
 iotrack now collects two level data, block_device and block_cgroup.

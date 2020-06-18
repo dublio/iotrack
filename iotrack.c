@@ -32,6 +32,7 @@ LIST_HEAD(g_block_cgroup);
 
 int g_index;
 int g_loop;
+int g_loop_nr;
 int g_extend;
 int g_debug;
 char g_ts[64];
@@ -1254,7 +1255,10 @@ static int show_data()
 {
 	struct tm *tm;
 	struct timespec t;
-	
+
+	if (g_loop == 0)
+		return 0;
+
 	clock_gettime(CLOCK_REALTIME, &t);
 	tm = localtime(&t.tv_sec);
 	if (!strftime(g_ts, sizeof(g_ts), "%Y-%m-%d %H:%M:%S", tm)) {
@@ -1286,12 +1290,13 @@ static void cleanup_all(void)
 
 static void usage(void)
 {
-	fprintf(stderr, "%s [-r root_cgroup] [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk]\n", g_name);
+	fprintf(stderr, "%s [-r root_cgroup] [-g cgroup] [-x] [-i interval_ms] [-D] [-d disk] [-n count]\n", g_name);
 	fprintf(stderr, "%s  -h  --help: show this help\n", g_name);
 	fprintf(stderr, "    -x, --extend: enable extend fields, the extend field show the statistics for read,write and others\n");
 	fprintf(stderr, "    -D, --debug: enable debug log\n");
 	fprintf(stderr, "    -d disk, --device disk: specify the disk name, i.e. -d nvme0n1 -d sda\n");
 	fprintf(stderr, "    -i interval_ms, --interval interval_ms: specify the sampling interval\n");
+	fprintf(stderr, "    -n count, --count count: specify the sampling count\n");
 	fprintf(stderr, "    -r root_cgroup, --root root_cgroup: specify the root block cgroup, i,e. /sys/fs/cgroup/blkio/\n");
 }
 
@@ -1314,6 +1319,7 @@ static struct option g_option[] = {
 	{"debug",	no_argument,		0, 'D'},
 	{"device",	required_argument,	0, 'd'},
 	{"root",	required_argument,	0, 'r'},
+	{"count",	required_argument,	0, 'n'},
 	{"help",	no_argument,		0, 'h'},
 	{0, 0, 0, 0}
 };
@@ -1324,7 +1330,7 @@ static int parse_args(int argc, char **argv)
 
 	g_name = argv[0];
 
-	while ((opt = getopt_long(argc, argv, "r:d:g:i:xhD", g_option, &index)) != -1) {
+	while ((opt = getopt_long(argc, argv, "r:d:g:i:n:xhD", g_option, &index)) != -1) {
 		switch (opt) {
 		case 'g':
 			if (block_cgroup_alloc_one(optarg, false))
@@ -1345,6 +1351,10 @@ static int parse_args(int argc, char **argv)
 			break;
 		case 'i':
 			if (set_interval(optarg))
+				goto out;
+			break;
+		case 'n':
+			if (1 != sscanf(optarg, "%d", &g_loop_nr))
 				goto out;
 			break;
 		case 'h':
@@ -1391,10 +1401,14 @@ int main(int argc, char **argv)
 		/* switch index */
 		g_index = 1 - g_index;
 
+		g_loop++;
+
+		/* Terminate loop: since we skip first loop, -1 here */
+		if (g_loop_nr && (g_loop - 1) == g_loop_nr)
+			break;
+
 		/* sleep interval */
 		usleep(g_delta_time_ms * 1000);
-
-		g_loop++;
 	}
 
 	block_device_deinit();
